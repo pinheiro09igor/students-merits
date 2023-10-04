@@ -1,8 +1,12 @@
+using Alunos.API.Repositorio;
+using Alunos.API.Servico;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IAlunosRepositorio, AlunosServico>();
 
 var app = builder.Build();
 

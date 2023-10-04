@@ -1,8 +1,12 @@
+using EmpresasParceira.API.Repositorio;
+using EmpresasParceira.API.Servico;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEmpresasParceiraRepositorio, EmpresasParceiraServico>();
 
 var app = builder.Build();
 
