@@ -3,15 +3,22 @@ using APIs.Interfaces;
 using APIs.Modelos;
 using APIs.Modelos.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace APIs.Servicos;
 
 public class AlunoServico : IAlunoRepositorio
 {
     private readonly AppDbContexto _context;
-    public AlunoServico(AppDbContexto context)
+    private readonly IConfiguration _configuration;
+    public AlunoServico(AppDbContexto context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
     public async Task<bool> Criar(CadastrarAlunoDto dto)
@@ -126,4 +133,47 @@ public class AlunoServico : IAlunoRepositorio
             return false;
         }
     }
+
+    public async Task<string> Logar(LoginDto dto)
+    {
+        try
+        {
+            var alunoEncontrado = await _context.Alunos
+            .Include(e => e.Endereco)
+                .FirstOrDefaultAsync(
+                    a => dto.Email.Equals(a.Email) &&
+                    dto.Password.Equals(a.Senha)
+                );
+            if (alunoEncontrado is null) return null;
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Email, alunoEncontrado.Email),
+                new Claim(ClaimTypes.Name, alunoEncontrado.Nome),
+            };
+            return GenerateNewJsonWebToken(claims);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public string GenerateNewJsonWebToken(List<Claim> claims)
+    {
+        var validIssuer = _configuration["Jwt:ValidIssuer"]!;
+        var validAudience = _configuration["Jwt:ValidAudience"]!;
+        var secret = _configuration["Jwt:Secret"]!;
+        var key = Encoding.UTF8.GetBytes(secret);
+
+        var chaveSecreta = new SymmetricSecurityKey(key);
+        var credenciais = new SigningCredentials(chaveSecreta, SecurityAlgorithms.HmacSha256);
+
+        var objetoDeToken = new JwtSecurityToken(
+            expires: DateTime.Now.AddHours(1),
+            claims: claims,
+            signingCredentials: credenciais);
+        string token = new JwtSecurityTokenHandler().WriteToken(objetoDeToken);
+        return token;
+    }
 }
+

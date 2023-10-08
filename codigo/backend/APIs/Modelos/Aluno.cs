@@ -5,19 +5,14 @@ namespace APIs.Modelos;
 
 public class Aluno : Usuario
 {
-    [MinLength(10), MaxLength(10)]
     public string? RG { get; set; }
 
-    [MinLength(11), MaxLength(11)]
     public string? CPF { get; set; }
 
-    [Required]
     public string? EnderecoId { get; set; }
 
-    [Required]
     public Endereco? Endereco { get; set; }
 
-    [Required]
     public string? InstituicaoDeEnsino { get; set; }
 
     public Aluno()
@@ -33,8 +28,9 @@ public class Aluno : Usuario
         Senha = dto.Senha;
         RG = dto.RG;
         CPF = dto.CPF;
-        EnderecoId = dto.Endereco.EnderecoId;
+        EnderecoId = Id;
         Endereco = dto.Endereco;
+        Endereco.EnderecoId = Id;
         InstituicaoDeEnsino = dto.InstituicaoDeEnsino;
     }
 }

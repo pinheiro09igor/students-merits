@@ -9,4 +9,5 @@ public interface IAlunoRepositorio
     Task<List<MostrarAlunoDto>> ObterTodos();
     Task<MostrarAlunoDto> ObterPorCredencial(string credencial);
     Task<bool> Apagar(string credencial);
+    Task<string> Logar(LoginDto dto);
 }
