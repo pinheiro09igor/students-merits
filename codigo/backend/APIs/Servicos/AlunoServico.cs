@@ -102,6 +102,7 @@ public class AlunoServico : IAlunoRepositorio
                     credencial.Equals(a.CPF) ||
                     credencial.Equals(a.RG)
                 );
+            if (alunoEncontrado == null) return null;
             return new MostrarAlunoDto(alunoEncontrado);
         }
         catch
