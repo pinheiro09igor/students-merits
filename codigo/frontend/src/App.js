@@ -1,13 +1,18 @@
-import "./App.css";
+import { Outlet } from "react-router-dom";
+import AllRoutes from "./routers/AllRoutes.component";
+import Container from "@mui/material/Container";
+import Footer from "./components/footer/footer.component";
+import { Box } from "@mui/material";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>brabo</h1>
-      </header>
-    </div>
+    <Container maxWidth="xl">
+      <div className="App">
+        <AllRoutes />
+      </div>
+      <Outlet />
+    </Container>
   );
-}
+};
 
 export default App;
