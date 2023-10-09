@@ -8,119 +8,118 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace APIs.Migrations
+namespace APIs.Migrations;
+
+[DbContext(typeof(AppDbContexto))]
+[Migration("20231008203424_igormigrations")]
+partial class igormigrations
 {
-    [DbContext(typeof(AppDbContexto))]
-    [Migration("20231008203424_igormigrations")]
-    partial class igormigrations
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+        modelBuilder
+            .HasAnnotation("ProductVersion", "7.0.11")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("APIs.Modelos.Aluno", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+        modelBuilder.Entity("APIs.Modelos.Aluno", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CPF")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CPF")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EnderecoId")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("EnderecoId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("InstituicaoDeEnsino")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("InstituicaoDeEnsino")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Nome")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RG")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("RG")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                b.Property<string>("Senha")
+                    .IsRequired()
+                    .HasMaxLength(12)
+                    .HasColumnType("nvarchar(12)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("EnderecoId");
+                b.HasIndex("EnderecoId");
 
-                    b.ToTable("Alunos");
-                });
+                b.ToTable("Alunos");
+            });
 
-            modelBuilder.Entity("APIs.Modelos.Empresa", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+        modelBuilder.Entity("APIs.Modelos.Empresa", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CNPJ")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CNPJ")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Nome")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                b.Property<string>("Senha")
+                    .IsRequired()
+                    .HasMaxLength(12)
+                    .HasColumnType("nvarchar(12)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Empresas");
-                });
+                b.ToTable("Empresas");
+            });
 
-            modelBuilder.Entity("APIs.Modelos.Endereco", b =>
-                {
-                    b.Property<string>("EnderecoId")
-                        .HasColumnType("nvarchar(450)");
+        modelBuilder.Entity("APIs.Modelos.Endereco", b =>
+            {
+                b.Property<string>("EnderecoId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Bairro")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Bairro")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CEP")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CEP")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Cidade")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Cidade")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Numero")
-                        .HasColumnType("int");
+                b.Property<int>("Numero")
+                    .HasColumnType("int");
 
-                    b.Property<string>("Rua")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Rua")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("EnderecoId");
+                b.HasKey("EnderecoId");
 
-                    b.ToTable("Enderecos");
-                });
+                b.ToTable("Enderecos");
+            });
 
-            modelBuilder.Entity("APIs.Modelos.Aluno", b =>
-                {
-                    b.HasOne("APIs.Modelos.Endereco", "Endereco")
-                        .WithMany()
-                        .HasForeignKey("EnderecoId");
+        modelBuilder.Entity("APIs.Modelos.Aluno", b =>
+            {
+                b.HasOne("APIs.Modelos.Endereco", "Endereco")
+                    .WithMany()
+                    .HasForeignKey("EnderecoId");
 
-                    b.Navigation("Endereco");
-                });
+                b.Navigation("Endereco");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

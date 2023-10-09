@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAlunoRepositorio, AlunoServico>();
+builder.Services.AddScoped<IEmpresaRepositorio, EmpresaServico>();
 
 var app = builder.Build();
 

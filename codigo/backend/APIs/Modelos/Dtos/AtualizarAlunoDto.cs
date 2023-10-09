@@ -1,6 +1,5 @@
-﻿namespace APIs.Modelos.Dtos
+﻿namespace APIs.Modelos.Dtos;
+
+public class AtualizarAlunoDto : CadastrarAlunoDto
 {
-    public class AtualizarAlunoDto : CadastrarAlunoDto
-    {
-    }
 }
