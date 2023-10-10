@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIs.Modelos;
 
@@ -6,7 +7,8 @@ public class Endereco
 {
     [Key]
     [Required]
-    public string? EnderecoId { get; set; }
+    [JsonIgnore]
+    public string? EnderecoId { get; set; } = Guid.NewGuid().ToString();
 
     public string? Rua { get; set; }
 
