@@ -3,6 +3,11 @@ import { Aluno, Empresa } from "../types/User";
 
 const api = axios.create({
   baseURL: "https://localhost:7077",
+  headers: {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 export async function cadastrarUsuario(usuario: Aluno) {
