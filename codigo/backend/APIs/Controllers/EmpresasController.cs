@@ -14,21 +14,6 @@ public class EmpresasController : ControllerBase
         _repositorio = repositorio;
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
-    {
-        var token = await _repositorio.Logar(dto);
-        if (token is null) return NotFound(new
-        {
-            status = StatusCodes.Status404NotFound.ToString(),
-            message = "EMPRESA NÃO ENCONTRADA"
-        });
-        return Ok(new
-        {
-            token
-        });
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -52,7 +37,7 @@ public class EmpresasController : ControllerBase
     public async Task<IActionResult> Post([FromBody] CadastrarEmpresaDto dto)
     {
         var empresa = await _repositorio.Criar(dto);
-        if (!empresa) return BadRequest(new
+        if (empresa is null) return BadRequest(new
         {
             status = StatusCodes.Status400BadRequest.ToString(),
             message = "ERRO AO CADASTRAR"

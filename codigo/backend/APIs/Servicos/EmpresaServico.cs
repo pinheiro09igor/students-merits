@@ -66,45 +66,21 @@ public class EmpresaServico : IEmpresaRepositorio
         }
     }
 
-    public async Task<bool> Criar(CadastrarEmpresaDto dto)
+    public async Task<Empresa> Criar(CadastrarEmpresaDto dto)
     {
-        var success = false;
         try
         {
             var aluno = new Empresa(dto);
             await _context.Empresas.AddAsync(aluno);
             await _context.SaveChangesAsync();
-            success = true;
-            return success;
+            return aluno;
         }
         catch
         {
-            return success;
+            return null!;
         }
     }
 
-    public async Task<string> Logar(LoginDto dto)
-    {
-        try
-        {
-            var empresaEncontrada = await _context.Empresas
-                .FirstOrDefaultAsync(
-                    a => dto.Email.Equals(a.Email) &&
-                    dto.Password.Equals(a.Senha)
-                );
-            if (empresaEncontrada is null) return null;
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Email, empresaEncontrada.Email),
-                new Claim(ClaimTypes.Name, empresaEncontrada.Nome),
-            };
-            return GenerateNewJsonWebToken(claims);
-        }
-        catch
-        {
-            return null;
-        }
-    }
     public async Task<MostrarEmpresaDto> ObterPorCredencial(string credencial)
     {
         try

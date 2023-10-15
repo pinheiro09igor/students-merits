@@ -5,15 +5,15 @@ namespace APIs.Modelos;
 
 public class Aluno : Usuario
 {
-    public string? RG { get; set; }
+    public string RG { get; set; }
 
-    public string? CPF { get; set; }
+    public string CPF { get; set; }
 
-    public string? EnderecoId { get; set; }
+    public string EnderecoId { get; set; }
 
-    public Endereco? Endereco { get; set; }
+    public Endereco Endereco { get; set; }
 
-    public string? InstituicaoDeEnsino { get; set; }
+    public string InstituicaoDeEnsino { get; set; }
 
     public Aluno()
     {

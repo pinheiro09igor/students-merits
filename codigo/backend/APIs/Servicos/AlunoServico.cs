@@ -3,7 +3,6 @@ using APIs.Interfaces;
 using APIs.Modelos;
 using APIs.Modelos.Dtos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,19 +20,18 @@ public class AlunoServico : IAlunoRepositorio
         _configuration = configuration;
     }
 
-    public async Task<bool> Criar(CadastrarAlunoDto dto)
+    public async Task<Aluno> Criar(CadastrarAlunoDto dto)
     {
-        var success = false;
         try
         {
             var aluno = new Aluno(dto);
             await _context.Alunos.AddAsync(aluno);
             await _context.SaveChangesAsync();
-            success = true;
-            return success;
-        } catch
+            return aluno;
+        }
+        catch
         {
-            return success;
+            return null!;
         }
     }
 
@@ -45,8 +43,8 @@ public class AlunoServico : IAlunoRepositorio
             var alunoEncontrado = await _context.Alunos
                 .Include(e => e.Endereco)
                 .FirstOrDefaultAsync(
-                    a => credencial.Equals(a.Email) || 
-                    credencial.Equals(a.CPF) || 
+                    a => credencial.Equals(a.Email) ||
+                    credencial.Equals(a.CPF) ||
                     credencial.Equals(a.RG)
                 );
             if (alunoEncontrado is null) return false;
@@ -84,7 +82,8 @@ public class AlunoServico : IAlunoRepositorio
                 alunosFormat.Add(new MostrarAlunoDto(aluno));
             }
             return alunosFormat;
-        } catch
+        }
+        catch
         {
             return new List<MostrarAlunoDto>();
         }
@@ -132,30 +131,6 @@ public class AlunoServico : IAlunoRepositorio
         catch
         {
             return false;
-        }
-    }
-
-    public async Task<string> Logar(LoginDto dto)
-    {
-        try
-        {
-            var alunoEncontrado = await _context.Alunos
-            .Include(e => e.Endereco)
-                .FirstOrDefaultAsync(
-                    a => dto.Email.Equals(a.Email) &&
-                    dto.Password.Equals(a.Senha)
-                );
-            if (alunoEncontrado is null) return null;
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Email, alunoEncontrado.Email),
-                new Claim(ClaimTypes.Name, alunoEncontrado.Nome),
-            };
-            return GenerateNewJsonWebToken(claims);
-        }
-        catch
-        {
-            return null;
         }
     }
 

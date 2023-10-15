@@ -15,21 +15,6 @@ public class AlunosController : ControllerBase
         _repositorio = repositorio;
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
-    {
-        var token = await _repositorio.Logar(dto);
-        if (token is null) return NotFound(new
-        {
-            status = StatusCodes.Status404NotFound.ToString(),
-            message = "ALUNO NÃO ENCONTRADO"
-        });
-        return Ok(new
-        {
-            token
-        });
-    }
-
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -53,7 +38,7 @@ public class AlunosController : ControllerBase
     public async Task<IActionResult> Post([FromBody] CadastrarAlunoDto dto)
     {
         var aluno = await _repositorio.Criar(dto);
-        if (!aluno) return BadRequest(new
+        if (aluno is null) return BadRequest(new
         {
             status = StatusCodes.Status400BadRequest.ToString(),
             message = "ERRO AO CADASTRAR"
