@@ -3,6 +3,11 @@ import { Aluno, Empresa } from "../types/User";
 
 const api = axios.create({
   baseURL: "https://localhost:7077",
+  headers: {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 export async function cadastrarUsuario(usuario: Aluno) {
@@ -35,20 +40,24 @@ export async function obterEmpresa(credencial: string) {
   return response.data;
 }
 
-export async function logarUsuario(email: string, password: string) {
-  const response = await api.post("/api/Alunos/login", { email, password });
-  return {
-    usuario: { email, password },
-    token: response.data.token,
-  };
-}
+// export async function logar(email: string, senha: string, tipo: string) {
+//   const response = await api.post("/api/Auth/logar", {
+//     email: email,
+//     senha: senha,
+//     tipo: tipo,
+//   });
+//   return response.data.token;
+// }
 
-export async function logarEmpresa(email: string, password: string) {
-  const response = await api.post("/api/Empresas/login", { email, password });
-  return {
-    usuario: { email, password },
-    token: response.data.token,
-  };
+export class LoginService {
+  static async login(email: string, senha: string, tipo: string) {
+    const response = await api.post("/api/Auth/logar", {
+      email,
+      senha,
+      tipo,
+    });
+    return response.data.token;
+  }
 }
 
 export async function apagarEmpresa(credencial: string) {
