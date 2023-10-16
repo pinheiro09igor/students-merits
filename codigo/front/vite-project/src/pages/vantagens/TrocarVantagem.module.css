@@ -1,0 +1,85 @@
+div.body {
+  padding: 0 15rem;
+}
+.vantagem {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+}
+
+.divImg {
+  flex: 0.8;
+  background-color: #d9d9d9;
+  min-width: 450px;
+  max-width: 450px;
+  height: 400px;
+  border-radius: 30px;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.divImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 30px;
+  transition: 0.5s;
+}
+
+.data {
+  flex: 1.2;
+}
+
+.preco,
+.descricao,
+.buttonTrocar {
+  margin-top: 40px;
+}
+
+.outrasVantagens {
+  margin-top: 10rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5rem;
+}
+
+.ponto {
+  color: #0075ff;
+  font-size: 22px;
+}
+
+.cards {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 100px;
+}
+
+@media (max-width: 1300px) {
+  .cards {
+    gap: 350px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .cards {
+    gap: 200px;
+  }
+}
+
+@media (max-width: 1150px) {
+  .cards {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 1450px) {
+  .cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
