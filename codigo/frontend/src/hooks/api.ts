@@ -40,21 +40,21 @@ export async function obterEmpresa(credencial: string) {
   return response.data;
 }
 
-export async function logar(email: string, senha: string, tipo: string) {
-  const response = await api.post("/api/Auth/logar", {
-    email: email,
-    senha: senha,
-    tipo: tipo,
-  });
-  return response.data.token;
-}
+// export async function logar(email: string, senha: string, tipo: string) {
+//   const response = await api.post("/api/Auth/logar", {
+//     email: email,
+//     senha: senha,
+//     tipo: tipo,
+//   });
+//   return response.data.token;
+// }
 
 export class LoginService {
   static async login(email: string, senha: string, tipo: string) {
     const response = await api.post("/api/Auth/logar", {
-      identificador: email,
-      senha: senha,
-      tipo: tipo,
+      email,
+      senha,
+      tipo,
     });
     return response.data.token;
   }
