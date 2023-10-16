@@ -1,0 +1,53 @@
+div.cardExtrato {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 2rem;
+    width: 100%;
+    padding: 1.5rem;
+}
+div.cardExtrato:hover {
+    background-color: #404249;
+    border-radius: 1rem;
+    color: #0075FF;
+}
+
+div.transactionType {
+    background-color: #EFEFEF;
+    border-radius: 2rem;
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.cardInfos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 7rem);
+}
+div.cardInfos div {
+    display: flex;
+    flex-direction: column;
+    row-gap: .5rem;
+    justify-content: center;
+}
+
+h3.cardTitle {
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+h3.cardTitle span {
+    font-weight: 600;
+}
+
+p.cardType {
+    font-weight: 400;
+    color: #A1A1A1;
+}
+
+p.cardValue {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
