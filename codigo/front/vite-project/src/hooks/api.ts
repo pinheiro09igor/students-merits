@@ -41,15 +41,15 @@ export async function obterEmpresa(credencial: string) {
 }
 
 export async function logarUsuario(email: string, password: string) {
-  const response = await api.post("/api/Alunos/login", { email, password });
-  return {
-    usuario: { email, password },
-    token: response.data.token,
-  };
+  const response = await api.post("/api/Auth/logar", {
+    email,
+    senha: password,
+  });
+  return response.data.token;
 }
 
 export async function logarEmpresa(email: string, password: string) {
-  const response = await api.post("/api/Empresas/login", {
+  const response = await api.post("/api/Auth/logar", {
     email,
     senha: password,
   });

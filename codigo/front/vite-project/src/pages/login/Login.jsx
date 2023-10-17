@@ -2,10 +2,10 @@
 import Input from "../../components/inputs/Input";
 import Form from "../../components/forms/Form";
 import Button from "../../components/buttons/Button";
-import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-import { LoginService } from "../../hooks";
+// import { useFormik } from "formik";
+// import { useNavigate } from "react-router-dom";
+// import * as Yup from "yup";
+// import { LoginService } from "../../hooks";
 
 import { Alert, AlertTitle } from "@mui/material";
 
@@ -28,7 +28,7 @@ const Login = () => {
       return;
     }
 
-    const resp = await LoginService.login(formData);
+    const resp = await login(formData);
 
     if (resp && resp.status !== 201) {
       setError(resp.msg);
