@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Aluno, Empresa, Usuario } from "../../types/User";
 import { AuthContext } from "./authContext";
-import { deslogarUsuario, logarEmpresa, logarUsuario, obterUsuario } from "../../hooks/api";
+import {
+   deslogarUsuario,
+   logarUsuario,
+   obterEmpresa,
+   obterUsuario,
+} from "../../hooks/api";
 
 export const AuthProvider = ({ children }: { children: JSX.Element }) => {
    const [usuario, setUser] = useState<Usuario | null>(null);
@@ -10,11 +15,11 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
 
    useEffect(() => {
       const validateToken = async () => {
-         const token = localStorage.getItem('token');
-         const email = localStorage.getItem('email');
-         if(token && email) {
+         const token = localStorage.getItem("token");
+         const email = localStorage.getItem("email");
+         if (token && email) {
             const data = await obterUsuario(email);
-            if(data.usuario && data.token) {
+            if (data.usuario && data.token) {
                setUser(data.usuario);
                setAluno(data.usuario);
             }
@@ -24,48 +29,39 @@ export const AuthProvider = ({ children }: { children: JSX.Element }) => {
    }, []);
 
    const logar = async (email: string, senha: string, tipo: string) => {
-      console.log(tipo);
-      if(tipo == "Aluno") {
-         const loginData = await logarUsuario(email, senha);
-         if(loginData.token) {
-            console.log(loginData.token);
+      const loginData = await logarUsuario(email, senha, tipo);
+      if (loginData.token) {
+         console.log(loginData.token);
+         if (tipo == "ALUNO") {
             const userData = await obterUsuario(email);
-            setUser(loginData.usuario);
             setAluno(userData.data);
-            setToken(loginData.token, email);
-            return true;
+         } else {
+            const userEmpresa = await obterEmpresa(email);
+            setEmpresa(userEmpresa.data);
          }
-         return false;
-      }
-      if(tipo == "Empresa") {
-         const data = await logarEmpresa(email, senha);
-         if(data.token) {
-            const empresa = await obterUsuario(email);
-            setUser(data.usuario);
-            setEmpresa(empresa.data);
-            setToken(data.token, email);
-            return true;
-         }
-         return false;
+         setToken(loginData.token, email);
+         return true;
       }
       return false;
-   }
+   };
 
    const deslogar = () => {
       deslogarUsuario();
       setUser(null);
-   }
+   };
 
    const setToken = (token: string, email: string) => {
-      localStorage.setItem('token', token);
-      localStorage.setItem('email', email);
-   }
+      localStorage.setItem("token", token);
+      localStorage.setItem("email", email);
+   };
 
    // ---------- Return da função AuthProvider ----------
 
    return (
-      <AuthContext.Provider value={{ usuario, aluno, empresa, logar, deslogar }}>
+      <AuthContext.Provider
+         value={{ usuario, aluno, empresa, logar, deslogar }}
+      >
          {children}
       </AuthContext.Provider>
    );
-}
+};
