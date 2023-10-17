@@ -54,7 +54,7 @@ export const LoginProvider = ({ children }) => {
   const login = async (formData) => {
     // Use a função de API apropriada para fazer login
     try {
-      const data = await LoginService.login(formData.email, formData.password);
+      const data = await login(formData.email, formData.password);
       localStorage.setItem("userLAB", JSON.stringify(data.usuario));
       setUser(data.usuario);
       setLoading(false);
