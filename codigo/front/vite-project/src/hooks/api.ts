@@ -49,11 +49,11 @@ export async function logarUsuario(email: string, password: string) {
 }
 
 export async function logarEmpresa(email: string, password: string) {
-  const response = await api.post("/api/Empresas/login", { email, password });
-  return {
-    usuario: { email, password },
-    token: response.data.token,
-  };
+  const response = await api.post("/api/Empresas/login", {
+    email,
+    senha: password,
+  });
+  return response.data.token;
 }
 
 export class LoginService {
