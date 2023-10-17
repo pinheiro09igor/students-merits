@@ -1,11 +1,26 @@
 //* Components
 import Input from "../../components/inputs/Input";
 import Form from "../../components/forms/Form";
-import Button from "../../components/buttons/Button";
-// import { useFormik } from "formik";
-// import { useNavigate } from "react-router-dom";
-// import * as Yup from "yup";
-// import { LoginService } from "../../hooks";
+// import Button from "../../components/buttons/Button";
+import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { LoginService } from "../../hooks";
+
+import {
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  ThemeProvider,
+  Typography,
+  createTheme,
+} from "@mui/material";
 
 import { Alert, AlertTitle } from "@mui/material";
 
@@ -18,48 +33,54 @@ import { LoginContext } from "../../context/LoginContext";
 //* CSS
 import "./Login.css";
 
-const Login = () => {
+// const Login = () => {
+//   const [error, setError] = useState(null);
+
+//   const { login } = useContext(LoginContext);
+
+//   const handleSubmit = async (formData) => {
+//     if (!formData) {
+//       return;
+//     }
+
+//     const resp = await login(formData);
+
+//     if (resp && resp.status !== 201) {
+//       setError(resp.msg);
+//     }
+//   };
+
+export const Login = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
+  console.log("Login");
 
-  const { login } = useContext(LoginContext);
-
-  const handleSubmit = async (formData) => {
-    if (!formData) {
-      return;
-    }
-
-    const resp = await login(formData);
-
-    if (resp && resp.status !== 201) {
-      setError(resp.msg);
-    }
-  };
-
-  // export const Login = () => {
-  //   const navigate = useNavigate();
-  //   const [error, setError] = useState(null);
-  //   console.log("Login");
-
-  //   const formik = useFormik({
-  //     initialValues: {
-  //       email: "",
-  //       senha: "",
-  //     },
-  //     validationSchema: Yup.object({
-  //       email: Yup.string().required("Campo obrigatório"),
-  //       senha: Yup.string().required("Campo obrigatório"),
-  //     }),
-  //     onSubmit: async (values) => {
-  //       try {
-  //         console.log("values");
-  //         const token = await LoginService.login(values.email, values.senha);
-  //         localStorage.setItem("token", token);
-  //         navigate("/perfil");
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     },
-  //   });
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      senha: "",
+      tipo: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Campo obrigatório"),
+      senha: Yup.string().required("Campo obrigatório"),
+      tipo: Yup.string().required("Campo obrigatório"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        console.log("values");
+        const token = await LoginService.login(
+          values.email,
+          values.senha,
+          values.tipo
+        );
+        localStorage.setItem("token", token);
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
 
   return (
     <div className="login-body flex flex-column row-gap-5rem max-width-50rem">
@@ -71,7 +92,7 @@ const Login = () => {
           </h1>
           <p className="login">
             Faça login para ter acesso aos recursos da plataforma
-            {/* {JSON.stringify(formik.values)} */}
+            {JSON.stringify(formik.values)}
           </p>
         </div>
       </section>
@@ -84,17 +105,17 @@ const Login = () => {
           </Alert>
         )}
         <Form
-          // onSubmit={(e) => {
-          //   formik.handleSubmit(e);
-          // }}
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            formik.handleSubmit(e);
+          }}
+          // onSubmit={handleSubmit}
         >
           <Input
             type="email"
             name="email"
             id="email"
             label="Email"
-            // onChange={formik.handleChange}
+            onChange={formik.handleChange}
             required
           />
           <Input
@@ -102,9 +123,29 @@ const Login = () => {
             name="senha"
             id="senha"
             label="Senha"
-            // onChange={formik.handleChange}
+            onChange={formik.handleChange}
             required
           />
+
+          <FormControl>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="tipo"
+              onChange={formik.handleChange}
+            >
+              <FormControlLabel
+                value="ALUNO"
+                control={<Radio />}
+                label="Aluno"
+              />
+              <FormControlLabel
+                value="EMPRESA"
+                control={<Radio />}
+                label="Empresa"
+              />
+            </RadioGroup>
+          </FormControl>
 
           <div className="button-submit">
             <Button type="submit" className="submit" id="submit">
