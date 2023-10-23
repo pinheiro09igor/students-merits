@@ -4,7 +4,6 @@ public class MostrarAlunoDto
 {
     public string Nome { get; set; }
     public string Email { get; set; }
-    public string Senha { get; set; }
     public string RG { get; set; }
     public string CPF { get; set; }
     public Endereco Endereco { get; set; }
@@ -19,7 +18,6 @@ public class MostrarAlunoDto
     {
         Nome = a.Nome;
         Email = a.Email;
-        Senha = a.Senha;
         RG = a.RG;
         CPF = a.CPF;
         Endereco = a.Endereco;

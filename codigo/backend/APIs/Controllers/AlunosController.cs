@@ -1,5 +1,4 @@
 ﻿using APIs.Interfaces;
-using APIs.Modelos;
 using APIs.Modelos.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,10 +21,10 @@ public class AlunosController : ControllerBase
         return Ok(alunos);
     }
 
-    [HttpGet("{credential}")]
-    public async Task<IActionResult> Get(string credential)
+    [HttpGet("{credencial}")]
+    public async Task<IActionResult> Get([FromRoute] string credencial)
     {
-        var aluno = await _repositorio.ObterPorCredencial(credential);
+        var aluno = await _repositorio.ObterPorCredencial(credencial);
         if(aluno is null) return NotFound(new
         {
             status = StatusCodes.Status404NotFound.ToString(),
@@ -38,7 +37,7 @@ public class AlunosController : ControllerBase
     public async Task<IActionResult> Post([FromBody] CadastrarAlunoDto dto)
     {
         var aluno = await _repositorio.Criar(dto);
-        if (aluno is null) return BadRequest(new
+        if (!aluno) return BadRequest(new
         {
             status = StatusCodes.Status400BadRequest.ToString(),
             message = "ERRO AO CADASTRAR"
@@ -63,7 +62,7 @@ public class AlunosController : ControllerBase
     }
 
     [HttpDelete("{credencial}")]
-    public async Task<IActionResult> Delete(string credencial)
+    public async Task<IActionResult> Delete([FromRoute] string credencial)
     {
         var aluno = await _repositorio.Apagar(credencial);
         if (!aluno) return NotFound(new

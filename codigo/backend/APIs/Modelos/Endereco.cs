@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace APIs.Modelos;
@@ -6,17 +7,30 @@ namespace APIs.Modelos;
 public class Endereco
 {
     [Key]
-    [Required]
     [JsonIgnore]
-    public string? EnderecoId { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; }
 
-    public string? Rua { get; set; }
+    [Required]
+    [MinLength(2), MaxLength(255)]
+    public string Rua { get; set; }
 
+    [Required]
     public int Numero { get; set; }
 
-    public string? Bairro { get; set; }
+    [Required]
+    [MinLength(2), MaxLength(255)]
+    public string Bairro { get; set; }
 
-    public string? Cidade { get; set; }
+    [Required]
+    [MinLength(2), MaxLength(255)]
+    public string Cidade { get; set; }
 
-    public string? CEP { get; set; }
+    [Required]
+    [MinLength(8), MaxLength(8)]
+    public string CEP { get; set; }
+
+    [JsonIgnore]
+    public string AlunoRef { get; set; }
+    [JsonIgnore]
+    public Aluno Aluno { get; set; }
 }
