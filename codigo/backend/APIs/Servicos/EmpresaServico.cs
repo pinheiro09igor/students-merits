@@ -20,85 +20,6 @@ public class EmpresaServico : IEmpresaRepositorio
         _configuration = configuration;
     }
 
-    public async Task<bool> Apagar(string credencial)
-    {
-        try
-        {
-            var empresaEncontrada = await _context.Empresas
-                .FirstOrDefaultAsync(
-                    a => credencial.Equals(a.CNPJ) ||
-                    credencial.Equals(a.Email));
-            if (empresaEncontrada is null) return false;
-
-            _context.Empresas.Remove(empresaEncontrada);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public async Task<bool> Atualizar(string credencial, AtualizarEmpresaDto dto)
-    {
-        var success = false;
-        try
-        {
-            var empresaEncontrada = await _context.Empresas
-                .FirstOrDefaultAsync(
-                    a => credencial.Equals(a.CNPJ) ||
-                    credencial.Equals(a.Email));
-            if (empresaEncontrada is null) return false;
-
-            empresaEncontrada.Nome = dto.Nome;
-            empresaEncontrada.Email = dto.Email;
-            empresaEncontrada.Senha = dto.Senha;
-            empresaEncontrada.CNPJ = dto.CNPJ;
-            await _context.SaveChangesAsync();
-
-            success = true;
-            return success;
-        }
-        catch
-        {
-            return success;
-        }
-    }
-
-    public async Task<Empresa> Criar(CadastrarEmpresaDto dto)
-    {
-        try
-        {
-            var aluno = new Empresa(dto);
-            await _context.Empresas.AddAsync(aluno);
-            await _context.SaveChangesAsync();
-            return aluno;
-        }
-        catch
-        {
-            return null!;
-        }
-    }
-
-    public async Task<MostrarEmpresaDto> ObterPorCredencial(string credencial)
-    {
-        try
-        {
-            var empresaEncontrada = await _context.Empresas
-                .FirstOrDefaultAsync(
-                    a => credencial.Equals(a.Email) ||
-                    credencial.Equals(a.CNPJ)
-                );
-            if (empresaEncontrada == null) return null;
-            return new MostrarEmpresaDto(empresaEncontrada);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     public async Task<List<MostrarEmpresaDto>> ObterTodos()
     {
         try
@@ -117,6 +38,71 @@ public class EmpresaServico : IEmpresaRepositorio
         }
     }
 
+    public async Task<MostrarEmpresaDto> ObterPorCredencial(string credencial)
+    {
+        try
+        {
+            var empresaEncontrada = await ObterEmpresaPorCredencial(credencial);
+            if (empresaEncontrada == null) return null;
+            return new MostrarEmpresaDto(empresaEncontrada);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<bool> Apagar(string credencial)
+    {
+        try
+        {
+            var empresaEncontrada = await ObterEmpresaPorCredencial(credencial);
+            if (empresaEncontrada is null) return false;
+
+            _context.Empresas.Remove(empresaEncontrada);
+            return (await _context.SaveChangesAsync() != 0);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> Atualizar(string credencial, AtualizarEmpresaDto dto)
+    {
+        try
+        {
+            var empresaEncontrada = await ObterEmpresaPorCredencial(credencial);
+            if (empresaEncontrada is null) return false;
+
+            empresaEncontrada.Nome = dto.Nome;
+            empresaEncontrada.Email = dto.Email;
+            empresaEncontrada.Senha = dto.Senha;
+            empresaEncontrada.CNPJ = dto.CNPJ;
+
+            return (await _context.SaveChangesAsync() != 0);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> Criar(CadastrarEmpresaDto dto)
+    {
+        try
+        {
+            Empresa empresa = new(dto);
+            await _context.Empresas.AddAsync(empresa);
+            return (await _context.SaveChangesAsync() != 0);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public string GenerateNewJsonWebToken(List<Claim> claims)
     {
         var secret = _configuration["Jwt:Secret"]!;
@@ -131,5 +117,23 @@ public class EmpresaServico : IEmpresaRepositorio
             signingCredentials: credenciais);
         string token = new JwtSecurityTokenHandler().WriteToken(objetoDeToken);
         return token;
+    }
+
+    public async Task<Empresa> ObterEmpresaPorCredencial(string credencial)
+    {
+        try
+        {
+            var empresaEncontrada = await _context.Empresas
+                .FirstOrDefaultAsync(
+                    a => credencial.Equals(a.Email) ||
+                    credencial.Equals(a.CNPJ)
+                );
+            if (empresaEncontrada == null) return null;
+            return empresaEncontrada;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

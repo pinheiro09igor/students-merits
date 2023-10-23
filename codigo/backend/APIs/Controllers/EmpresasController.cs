@@ -22,7 +22,7 @@ public class EmpresasController : ControllerBase
     }
 
     [HttpGet("{credential}")]
-    public async Task<IActionResult> Get(string credential)
+    public async Task<IActionResult> Get([FromRoute] string credential)
     {
         var empresa = await _repositorio.ObterPorCredencial(credential);
         if (empresa is null) return NotFound(new
@@ -37,7 +37,7 @@ public class EmpresasController : ControllerBase
     public async Task<IActionResult> Post([FromBody] CadastrarEmpresaDto dto)
     {
         var empresa = await _repositorio.Criar(dto);
-        if (empresa is null) return BadRequest(new
+        if (!empresa) return BadRequest(new
         {
             status = StatusCodes.Status400BadRequest.ToString(),
             message = "ERRO AO CADASTRAR"
@@ -62,7 +62,7 @@ public class EmpresasController : ControllerBase
     }
 
     [HttpDelete("{credencial}")]
-    public async Task<IActionResult> Delete(string credencial)
+    public async Task<IActionResult> Delete([FromRoute] string credencial)
     {
         var empresa = await _repositorio.Apagar(credencial);
         if (!empresa) return NotFound(new

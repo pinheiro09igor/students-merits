@@ -23,8 +23,10 @@ namespace APIs.Servicos
 
         public async Task<string> Cadastrar(CadastrarEmpresaDto dto)
         {
-            var empresa = await empresaRepositorio.Criar(dto);
-            if (empresa != null) return GenerateNewJsonWebToken(new List<Claim>()
+            var empresaResposta = await empresaRepositorio.Criar(dto);
+            var empresa = await empresaRepositorio.ObterEmpresaPorCredencial(dto.Email);
+
+            if (empresaResposta) return GenerateNewJsonWebToken(new List<Claim>()
             {
                 new Claim(ClaimTypes.Email, empresa.Email),
                 new Claim(ClaimTypes.Name, empresa.Nome),
@@ -35,8 +37,10 @@ namespace APIs.Servicos
 
         public async Task<string> Cadastrar(CadastrarAlunoDto dto)
         {
-            var aluno = await alunoRepositorio.Criar(dto);
-            if (aluno != null) return GenerateNewJsonWebToken(new List<Claim>()
+            var alunoResposta = await alunoRepositorio.Criar(dto);
+            var aluno = await alunoRepositorio.ObterAlunoPorCredencial(dto.Email);
+
+            if (alunoResposta) return GenerateNewJsonWebToken(new List<Claim>()
             {
                 new Claim(ClaimTypes.Email, aluno.Email),
                 new Claim(ClaimTypes.Name, aluno.Nome),
@@ -49,8 +53,9 @@ namespace APIs.Servicos
         {
             if (dto.Tipo.Equals("ALUNO"))
             {
-                var aluno = await alunoRepositorio.ObterPorCredencial(dto.Email);
-                if (aluno == null) return null!;
+                var aluno = await alunoRepositorio.ObterAlunoPorCredencial(dto.Email);
+
+                if (aluno is null) return null!;
                 if (!aluno.Senha.Equals(dto.Senha)) return null!;
 
                 return GenerateNewJsonWebToken(new List<Claim>()
@@ -63,6 +68,7 @@ namespace APIs.Servicos
             else if (dto.Tipo.Equals("EMPRESA"))
             {
                 var empresa = await empresaRepositorio.ObterPorCredencial(dto.Email);
+
                 if (empresa == null) return null!;
                 if (!empresa.Senha.Equals(dto.Senha)) return null!;
 
@@ -72,7 +78,7 @@ namespace APIs.Servicos
                     new Claim(ClaimTypes.Name, empresa.Nome),
                     new Claim(ClaimTypes.NameIdentifier, empresa.CNPJ)
                 });
-            } 
+            }
             else
             {
                 return null!;
@@ -108,6 +114,11 @@ namespace APIs.Servicos
             }
         }
 
+        /// <summary>
+        /// Gera um Token de Autenticação com base em uma lista de claims.
+        /// </summary>
+        /// <param name="claims">Lista de claims com dados do usuário.</param>
+        /// <returns>Retorna um Token de Autenticação.</returns>
         private string GenerateNewJsonWebToken(List<Claim> claims)
         {
             var validIssuer = config["Jwt:ValidIssuer"]!;

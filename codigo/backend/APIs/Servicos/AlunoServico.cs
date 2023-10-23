@@ -59,7 +59,7 @@ public class AlunoServico : IAlunoRepositorio
         {
             Aluno aluno = new(dto);
             await _context.Alunos.AddAsync(aluno);
-            return (await _context.SaveChangesAsync() == 2);
+            return (await _context.SaveChangesAsync() != 0);
         }
         catch
         {
@@ -76,7 +76,7 @@ public class AlunoServico : IAlunoRepositorio
 
             GerarAlunoAtualizado(alunoEncontrado, dto);
 
-            return (await _context.SaveChangesAsync() == 2);
+            return (await _context.SaveChangesAsync() != 0);
         }
         catch
         {
@@ -95,7 +95,7 @@ public class AlunoServico : IAlunoRepositorio
             _context.Alunos.Remove(alunoEncontrado);
             _context.Enderecos.Remove(alunoEncontrado.Endereco);
             
-            return (await _context.SaveChangesAsync() == 2);
+            return (await _context.SaveChangesAsync() != 0);
         }
         catch
         {
