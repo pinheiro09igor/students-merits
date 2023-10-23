@@ -16,7 +16,8 @@ public class AppDbContexto : DbContext
         modelBuilder
             .Entity<Aluno>()
             .HasOne(a => a.Endereco)
-            .WithMany()
-            .HasForeignKey(a => a.EnderecoId);
+            .WithOne(a => a.Aluno)
+            .HasForeignKey<Endereco>(e => e.AlunoRef)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
