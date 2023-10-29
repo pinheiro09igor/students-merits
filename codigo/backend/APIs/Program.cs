@@ -1,6 +1,7 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using APIs.Contexto;
-using APIs.Interfaces;
+using APIs.Repositorios;
 using APIs.Servicos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +14,11 @@ var connectionString = builder.Configuration.GetConnectionString("local");
 const string myCors = "allowAll";
 builder.Services.AddCors(options => options.AddPolicy(name: myCors, policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
 builder.Services.AddDbContext<AppDbContexto>(options => options.UseSqlServer(connectionString));
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IAlunoRepositorio, AlunoServico>();
-builder.Services.AddScoped<IEmpresaRepositorio, EmpresaServico>();
-builder.Services.AddScoped<IAuthRepositorio, AuthServico>();
+builder.Services.AddScoped<IUsuarioRepositorio, UsuarioServico>();
+builder.Services.AddScoped<IAutenticacaoRepositorio, AutenticacaoServico>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
   {
@@ -33,17 +33,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           ValidateIssuerSigningKey = true
       };
   });
-builder.Services.AddSwaggerGen(s =>
-{
-    s.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Laboratório - ICEI PUCMINAS",
-        Version = "v1"
-    });
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    s.IncludeXmlComments(xmlPath);
-});
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
