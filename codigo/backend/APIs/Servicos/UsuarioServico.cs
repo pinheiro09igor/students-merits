@@ -34,6 +34,8 @@ public class UsuarioServico : IUsuarioRepositorio
         if (!EnumTipoDeUsuario.ALUNO.ToString().Equals(dto.TipoDeUsuario) &&
             !EnumTipoDeUsuario.EMPRESA.ToString().Equals(dto.TipoDeUsuario) &&
             !EnumTipoDeUsuario.PROFESSOR.ToString().Equals(dto.TipoDeUsuario)) return null!;
+
+        await using var transacao = await _contexto.Database.BeginTransactionAsync();
         try
         {
             var usuarioId = Guid.NewGuid().ToString();
@@ -59,12 +61,26 @@ public class UsuarioServico : IUsuarioRepositorio
             };
             usuario.EnderecoDoUsuario.UsuarioQuePertenceAEsseEndereco = usuario;
 
+            var conta = new ContaBancaria
+            {
+                Id = Guid.NewGuid().ToString(),
+                Identificador = dto.Identificador,
+                SaldoBancario = 0
+            };
+
+            if (usuario.TipoDeUsuario.Equals("PROFESSOR"))
+                conta.SaldoBancario = 1000.0;
+
             await _contexto.Usuarios.AddAsync(usuario);
+            await _contexto.Contas.AddAsync(conta);
             var resposta = await _contexto.SaveChangesAsync();
+            
+            await transacao.CommitAsync();
             return resposta != 0 ? usuario : null!;
         }
         catch
         {
+            await transacao.RollbackAsync();
             return null!;
         }
     }

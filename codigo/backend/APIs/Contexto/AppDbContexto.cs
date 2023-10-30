@@ -8,6 +8,8 @@ public class AppDbContexto : DbContext
 {
     public DbSet<Usuario> Usuarios => Set<Usuario>();
     public DbSet<Endereco> Enderecos => Set<Endereco>();
+    public DbSet<ContaBancaria> Contas => Set<ContaBancaria>();
+    public DbSet<TransferenciaBancaria> TransferenciaBancarias => Set<TransferenciaBancaria>();
 
     public AppDbContexto(DbContextOptions<AppDbContexto> options) : base(options) { }
 
@@ -22,5 +24,6 @@ public class AppDbContexto : DbContext
 
         modelBuilder.Entity<Usuario>().HasIndex(e => e.Identificador).IsUnique();
         modelBuilder.Entity<Endereco>().HasIndex(e => e.Cep).IsUnique();
+        modelBuilder.Entity<ContaBancaria>().HasIndex(e => e.Identificador).IsUnique();
     }
 }

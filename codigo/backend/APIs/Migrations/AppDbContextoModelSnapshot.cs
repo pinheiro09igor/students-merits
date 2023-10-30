@@ -21,6 +21,26 @@ namespace APIs.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("APIs.Modelos.Entidade.ContaBancaria", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Identificador")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("SaldoBancario")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Identificador")
+                        .IsUnique();
+
+                    b.ToTable("Contas");
+                });
+
             modelBuilder.Entity("APIs.Modelos.Entidade.Endereco", b =>
                 {
                     b.Property<string>("Id")
@@ -63,6 +83,31 @@ namespace APIs.Migrations
                         .HasFilter("[UsuarioId] IS NOT NULL");
 
                     b.ToTable("Enderecos");
+                });
+
+            modelBuilder.Entity("APIs.Modelos.Entidade.TransferenciaBancaria", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DataTransferencia")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentificadorContaDestino")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdentificadorContaOrigem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Valor")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TransferenciaBancarias");
                 });
 
             modelBuilder.Entity("APIs.Modelos.Entidade.Usuario", b =>

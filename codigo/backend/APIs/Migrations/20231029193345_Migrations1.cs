@@ -5,11 +5,39 @@
 namespace APIs.Migrations
 {
     /// <inheritdoc />
-    public partial class Migration_2023 : Migration
+    public partial class Migrations1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Contas",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Identificador = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SaldoBancario = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TransferenciaBancarias",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IdentificadorContaOrigem = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IdentificadorContaDestino = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Valor = table.Column<double>(type: "float", nullable: false),
+                    DataTransferencia = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransferenciaBancarias", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Usuarios",
                 columns: table => new
@@ -51,6 +79,12 @@ namespace APIs.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Contas_Identificador",
+                table: "Contas",
+                column: "Identificador",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Enderecos_Cep",
                 table: "Enderecos",
                 column: "Cep",
@@ -74,7 +108,13 @@ namespace APIs.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Contas");
+
+            migrationBuilder.DropTable(
                 name: "Enderecos");
+
+            migrationBuilder.DropTable(
+                name: "TransferenciaBancarias");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

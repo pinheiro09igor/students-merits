@@ -19,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioServico>();
 builder.Services.AddScoped<IAutenticacaoRepositorio, AutenticacaoServico>();
+builder.Services.AddScoped<IBancoRepositorio, BancoServico>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
   {

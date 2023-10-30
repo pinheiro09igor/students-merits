@@ -10,14 +10,17 @@ namespace APIs.Servicos;
 public class AutenticacaoServico : IAutenticacaoRepositorio
 {
     private readonly IUsuarioRepositorio _repositorio;
-    private readonly IConfiguration _configuration;
-    private string _validIssuer;
-    private string _validAudience;
-    private SymmetricSecurityKey _chaveSecreta;
+    private readonly string _validIssuer;
+    private readonly string _validAudience;
+    private readonly SymmetricSecurityKey _chaveSecreta;
     public AutenticacaoServico(IUsuarioRepositorio repositorio, IConfiguration configuration)
     {
         _repositorio = repositorio;
-        _configuration = configuration;
+        _validIssuer = configuration["Jwt:ValidIssuer"]!;
+        _validAudience = configuration["Jwt:ValidAudience"]!;
+        var secret = configuration["Jwt:Secret"]!;
+        var key = Encoding.UTF8.GetBytes(secret);
+        _chaveSecreta = new SymmetricSecurityKey(key);
     }
     
     public async Task<string> Logar(LoginDto dto)
@@ -36,11 +39,6 @@ public class AutenticacaoServico : IAutenticacaoRepositorio
 
     public bool ValidarToken(string token)
     {
-        _validIssuer = _configuration["Jwt:ValidIssuer"]!;
-        _validAudience = _configuration["Jwt:ValidAudience"]!;
-        var secret = _configuration["Jwt:Secret"]!;
-        var key = Encoding.UTF8.GetBytes(secret);
-        _chaveSecreta = new SymmetricSecurityKey(key);
         var validationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -65,11 +63,6 @@ public class AutenticacaoServico : IAutenticacaoRepositorio
 
     private string GerarToken(IEnumerable<Claim> claims)
     {
-        _validIssuer = _configuration["Jwt:ValidIssuer"]!;
-        _validAudience = _configuration["Jwt:ValidAudience"]!;
-        var secret = _configuration["Jwt:Secret"]!;
-        var key = Encoding.UTF8.GetBytes(secret);
-        _chaveSecreta = new SymmetricSecurityKey(key);
         var credenciais = new SigningCredentials(_chaveSecreta, SecurityAlgorithms.HmacSha256);
         var objetoDeToken = new JwtSecurityToken(
             issuer: _validIssuer,
