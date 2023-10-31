@@ -12,137 +12,137 @@ import PerfilEmpresa from "./components/PerfilEmpresa";
 import PerfilAluno from "./components/PerfilAluno";
 
 const Perfil = () => {
-  const url = "http://localhost:7077/api";
+   const url = "https://localhost:7077/api";
 
-  const { user, updateUser, logout } = useContext(LoginContext);
-  const navigate = useNavigate();
+   const { user, updateUser, logout } = useContext(LoginContext);
+   const navigate = useNavigate();
 
-  const [userType, setUserType] = useState("");
-  const [instituicoes, setInstituicoes] = useState([]);
-  const [cursos, setCursos] = useState([]);
-  const [departamentos, setDepartamentos] = useState([]);
-  const [instituicao, setInstituicao] = useState();
-  const [id, setId] = useState("");
+   const [userType, setUserType] = useState("");
+   const [instituicoes, setInstituicoes] = useState([]);
+   const [cursos, setCursos] = useState([]);
+   const [departamentos, setDepartamentos] = useState([]);
+   const [instituicao, setInstituicao] = useState();
+   const [id, setId] = useState("");
 
-  useEffect(() => {
-    setId(user._id);
-    setUserType(user.pessoa.tipo);
+   useEffect(() => {
+      setId(user.email);
+      setUserType(user.tipo);
 
-    if (user.pessoa.tipo !== "Empresa") {
-      setInstituicao(user.instituicaoEnsino);
-      setCursos(user.instituicaoEnsino.cursos);
-      setDepartamentos(user.instituicaoEnsino.departamentos);
-    }
+      if (user.tipo !== "EMPRESA") {
+         setInstituicao(user.instituicaoEnsino);
+         setCursos(user.instituicaoEnsino);
+         setDepartamentos(user.instituicaoEnsino);
+      }
 
-    fetch(`${url}/instituicaoEnsino`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-
-        throw response;
+      fetch(`${url}/Alunos/${user.email}`, {
+         method: "GET",
+         headers: {
+            "Content-Type": "application/json",
+         },
       })
-      .then((data) => setInstituicoes(data));
-  }, [navigate, user]);
+         .then((response) => {
+            if (response.ok) {
+               return response.json();
+            }
 
-  const handleChangeCourse = (selectedId) => {
-    if (selectedId !== "0") {
-      const instituicaoCursos = instituicoes.find(
-        (instituicao) => instituicao._id === selectedId
-      );
+            throw response;
+         })
+         .then((data) => setInstituicoes(data));
+   }, [navigate, user]);
 
-      setInstituicao(instituicaoCursos);
-      setCursos(instituicaoCursos.cursos);
-    } else setCursos([]);
-  };
+   const handleChangeCourse = (selectedId) => {
+      if (selectedId !== "0") {
+         const instituicaoCursos = instituicoes.find(
+            (instituicao) => instituicao._id === selectedId
+         );
 
-  const handleDeleteAccount = () => {
-    fetch(`${url}/${userType}?id=${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        alert(data.msg);
+         setInstituicao(instituicaoCursos);
+         setCursos(instituicaoCursos.cursos);
+      } else setCursos([]);
+   };
 
-        logout();
-        navigate("/cadastrar");
+   const handleDeleteAccount = () => {
+      fetch(`${url}/${userType}?id=${id}`, {
+         method: "DELETE",
+         headers: {
+            "Content-Type": "application/json",
+         },
       })
-      .catch((err) => {
-        console.error(err);
-        alert("Não foi possível apagar a conta.");
-      });
-  };
+         .then((resp) => resp.json())
+         .then((data) => {
+            alert(data.msg);
 
-  const handleSubmit = (formData) => {
-    if (!formData) {
-      return;
-    }
+            logout();
+            navigate("/cadastrar");
+         })
+         .catch((err) => {
+            console.error(err);
+            alert("Não foi possível apagar a conta.");
+         });
+   };
 
-    const objectForm = Object.fromEntries(formData);
+   const handleSubmit = (formData) => {
+      if (!formData) {
+         return;
+      }
 
-    fetch(`${url}/${userType.toLowerCase()}?id=${user._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(objectForm),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        alert(data.msg);
-        console.log(data.response);
-        updateUser(data.response);
+      const objectForm = Object.fromEntries(formData);
 
-        navigate("/perfil");
+      fetch(`${url}/${userType.toLowerCase()}?id=${user._id}`, {
+         method: "PUT",
+         headers: {
+            "Content-Type": "application/json",
+         },
+         body: JSON.stringify(objectForm),
       })
-      .catch((err) => {
-        console.error(err);
-        alert("Não foi possível editar a conta.");
-      });
-  };
+         .then((resp) => resp.json())
+         .then((data) => {
+            alert(data.msg);
+            console.log(data.response);
+            updateUser(data.response);
 
-  return (
-    <div className="perfil-body">
-      {userType === "Aluno" ? (
-        <PerfilAluno
-          user={user}
-          cursos={cursos}
-          instituicoes={instituicoes}
-          instituicao={instituicao}
-          onChange={handleChangeCourse}
-          onSubmit={handleSubmit}
-          deleteAccount={handleDeleteAccount}
-        />
-      ) : userType === "Professor" ? (
-        <PerfilProfessor
-          user={user}
-          cursos={cursos}
-          instituicoes={instituicoes}
-          instituicao={instituicao}
-          onChange={handleChangeCourse}
-          onSubmit={handleSubmit}
-          departamentos={departamentos}
-          deleteAccount={handleDeleteAccount}
-        />
-      ) : (
-        userType === "Empresa" && (
-          <PerfilEmpresa
-            user={user}
-            onSubmit={handleSubmit}
-            deleteAccount={handleDeleteAccount}
-          />
-        )
-      )}
-    </div>
-  );
+            navigate("/perfil");
+         })
+         .catch((err) => {
+            console.error(err);
+            alert("Não foi possível editar a conta.");
+         });
+   };
+
+   return (
+      <div className="perfil-body">
+         {userType === "ALUNO" ? (
+            <PerfilAluno
+               user={user}
+               cursos={cursos}
+               instituicoes={instituicoes}
+               instituicao={instituicao}
+               onChange={handleChangeCourse}
+               onSubmit={handleSubmit}
+               deleteAccount={handleDeleteAccount}
+            />
+         ) : userType === "PROFESSOR" ? (
+            <PerfilProfessor
+               user={user}
+               cursos={cursos}
+               instituicoes={instituicoes}
+               instituicao={instituicao}
+               onChange={handleChangeCourse}
+               onSubmit={handleSubmit}
+               departamentos={departamentos}
+               deleteAccount={handleDeleteAccount}
+            />
+         ) : (
+            userType === "EMPRESA" && (
+               <PerfilEmpresa
+                  user={user}
+                  onSubmit={handleSubmit}
+                  deleteAccount={handleDeleteAccount}
+               />
+            )
+         )}
+      </div>
+   );
 };
 
 export default Perfil;

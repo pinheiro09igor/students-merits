@@ -1,22 +1,25 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
 using APIs.Contexto;
-using APIs.Interfaces;
+using APIs.Repositorios;
 using APIs.Servicos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("local");
-var myCors = "allowAll";
+const string myCors = "allowAll";
 builder.Services.AddCors(options => options.AddPolicy(name: myCors, policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
 builder.Services.AddDbContext<AppDbContexto>(options => options.UseSqlServer(connectionString));
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IAlunoRepositorio, AlunoServico>();
-builder.Services.AddScoped<IEmpresaRepositorio, EmpresaServico>();
-builder.Services.AddScoped<IAuthRepositorio, AuthServico>();
+builder.Services.AddScoped<IUsuarioRepositorio, UsuarioServico>();
+builder.Services.AddScoped<IAutenticacaoRepositorio, AutenticacaoServico>();
+builder.Services.AddScoped<IBancoRepositorio, BancoServico>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
   {
@@ -31,7 +34,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
           ValidateIssuerSigningKey = true
       };
   });
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
