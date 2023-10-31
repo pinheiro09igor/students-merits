@@ -1,8 +1,9 @@
-﻿namespace APIs.Modelos.Dtos;
+﻿using System.Text.Json.Serialization;
+
+namespace APIs.Modelos.Dtos;
 
 public class LoginDto
 {
-    public string Email { get; set; } = string.Empty;
-    public string Senha { get; set; } = string.Empty;
-    public string Tipo {  get; set; } = string.Empty;
+    public string CredencialDeAcesso { get; set; }
+    public string Senha { get; set; }
 }
