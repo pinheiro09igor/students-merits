@@ -1,12 +1,12 @@
-import { http } from '../../../utils';
-import { IVantagem } from './interfaces';
+import { http } from "../../../utils";
+import { IVantagem } from "./interfaces";
 
 export class VantagemService {
   static async getAllVantagens(id?: string): Promise<IVantagem[]> {
-    const loggedInUserId = localStorage.getItem('id');
+    const loggedInUserId = localStorage.getItem("id");
     const body = id ? { id: loggedInUserId } : undefined;
 
-    const response = await http.post('/vantagem/all', body);
+    const response = await http.post("/vantagem", body);
     return response.data;
   }
 
@@ -16,7 +16,7 @@ export class VantagemService {
   }
 
   static async createVantagem(vantagem: IVantagem): Promise<void> {
-    await http.post('/vantagem', vantagem);
+    await http.post("/vantagem", vantagem);
   }
 
   static async updateVantagem(vantagem: IVantagem): Promise<void> {
@@ -28,9 +28,9 @@ export class VantagemService {
   }
 
   static async resgatarVantagem(id: string): Promise<void> {
-    const loggedInUserId = localStorage.getItem('id');
+    const loggedInUserId = localStorage.getItem("id");
     const body = { id: id, idAluno: loggedInUserId };
 
-    await http.post('/aluno/resgatarVantagem', body);
+    await http.post("/aluno/resgatarVantagem", body);
   }
 }
