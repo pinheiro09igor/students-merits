@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using APIs.Contexto;
+using APIs.Modelos.Entidade;
 using APIs.Repositorios;
 using APIs.Servicos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +21,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioServico>();
 builder.Services.AddScoped<IAutenticacaoRepositorio, AutenticacaoServico>();
 builder.Services.AddScoped<IBancoRepositorio, BancoServico>();
+builder.Services.AddScoped<IVantagemRepositorio, VantagemServico>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
   .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
   {
