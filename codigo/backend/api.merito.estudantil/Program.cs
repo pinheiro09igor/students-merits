@@ -8,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration["ConnectionStrings:local"];
 builder.Services.AddDbContext<Contexto>(options => options.UseSqlServer(connectionString));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<IEmail, EmailServico>();
 builder.Services.AddScoped<IRepositorioUsuario, UsuarioServico>();
 builder.Services.AddScoped<IRepositorioTransacao, TransacaoServico>();
