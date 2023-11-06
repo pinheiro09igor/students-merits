@@ -13,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IEmail, EmailServico>();
+builder.Services.AddTransient<IEmail, EmailServico>();
 builder.Services.AddScoped<IRepositorioTransacao, TransacaoServico>();
 builder.Services.AddScoped<IRepositorioResgateVantagem, ResgateVantagemServico>();
 builder.Services.AddScoped<IRepositorioTransferenciaDeMoedas, TransferirMoedasServico>();
