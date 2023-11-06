@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.merito.estudantil.servicos;
 
-public class VantagemServico : IRepositorioGenerico<Vantagem>
+public class VantagemServico : IRepositorioVantagem
 {
     private readonly Contexto _contexto;
     public VantagemServico(Contexto contexto)
@@ -13,9 +13,10 @@ public class VantagemServico : IRepositorioGenerico<Vantagem>
         _contexto = contexto;
     }
     
-    public async Task<ICollection<Vantagem>> ObterTodos()
+    public async Task<IEnumerable<Vantagem>> ObterTodos(ObterVantagensDto dto)
     {
-        return await _contexto.Vantagens.ToListAsync();
+        var vantagens = await _contexto.Vantagens.ToListAsync();
+        return vantagens.Where(v => v.IdEmpresa.Equals(dto.EmpresaIdentificador));
     }
 
     public async Task<Vantagem> ObterPorCredencial(string credencial)

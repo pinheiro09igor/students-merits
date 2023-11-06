@@ -14,14 +14,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IEmail, EmailServico>();
-builder.Services.AddScoped<IRepositorioUsuario, UsuarioServico>();
 builder.Services.AddScoped<IRepositorioTransacao, TransacaoServico>();
-builder.Services.AddScoped<IRepositorioResgateVantagem, AlunoServico>();
-builder.Services.AddScoped<IRepositorioTransferenciaDeMoedas, ProfessorServico>();
+builder.Services.AddScoped<IRepositorioResgateVantagem, ResgateVantagemServico>();
+builder.Services.AddScoped<IRepositorioTransferenciaDeMoedas, TransferirMoedasServico>();
+builder.Services.AddScoped<IRepositorioUsuario, UsuarioServico>();
 builder.Services.AddScoped<IRepositorioGenerico<Aluno>, AlunoServico>();
 builder.Services.AddScoped<IRepositorioGenerico<Professor>, ProfessorServico>();
 builder.Services.AddScoped<IRepositorioGenerico<Empresa>, EmpresaServico>();
-builder.Services.AddScoped<IRepositorioGenerico<Vantagem>, VantagemServico>();
+builder.Services.AddScoped<IRepositorioVantagem, VantagemServico>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

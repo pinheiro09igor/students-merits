@@ -9,7 +9,7 @@ public class EmailServico : IEmail
 {
     public async Task EnviarEmail(Email email)
     {
-        var cliente = new SmtpClient()
+        var cliente = new SmtpClient(CredenciaisParaEnvioDeEmail.Server, CredenciaisParaEnvioDeEmail.Port)
         {
             EnableSsl = true,
             Credentials = new NetworkCredential(

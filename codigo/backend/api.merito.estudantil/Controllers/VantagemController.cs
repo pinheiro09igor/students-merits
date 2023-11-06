@@ -8,17 +8,17 @@ namespace api.merito.estudantil.Controllers;
 [ApiController]
 public class VantagemController : ControllerBase
 {
-    private readonly IRepositorioGenerico<Vantagem> _repositorio;
+    private readonly IRepositorioVantagem _repositorio;
     
-    public VantagemController(IRepositorioGenerico<Vantagem> repositorio)
+    public VantagemController(IRepositorioVantagem repositorio)
     {
         _repositorio = repositorio;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> ObterTodos()
+    [HttpPost("all")]
+    public async Task<IActionResult> ObterTodos(ObterVantagensDto dto)
     {
-        return Ok(await _repositorio.ObterTodos());
+        return Ok(await _repositorio.ObterTodos(dto));
     }
 
     [HttpGet("{credencial}")]

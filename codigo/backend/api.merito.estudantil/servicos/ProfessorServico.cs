@@ -5,22 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.merito.estudantil.servicos;
 
-public class ProfessorServico : IRepositorioGenerico<Professor>, IRepositorioTransferenciaDeMoedas
+public class ProfessorServico : IRepositorioGenerico<Professor>
 {
     private readonly Contexto _contexto;
-    private readonly IEmail _email;
-    private readonly IRepositorioGenerico<Aluno> _repositorioAluno;
-    private readonly IRepositorioTransacao _repositorioTransacao;
-    public ProfessorServico(
-        Contexto contexto, 
-        IEmail email,
-        IRepositorioGenerico<Aluno> repositorioAluno, 
-        IRepositorioTransacao repositorioTransacao)
+    
+    public ProfessorServico(Contexto contexto)
     {
         _contexto = contexto;
-        _email = email;
-        _repositorioAluno = repositorioAluno;
-        _repositorioTransacao = repositorioTransacao;
     }
     
     public async Task<ICollection<Professor>> ObterTodos()
@@ -138,50 +129,6 @@ public class ProfessorServico : IRepositorioGenerico<Professor>, IRepositorioTra
         catch
         {
             await transacao.RollbackAsync();
-        }
-    }
-
-    public async Task TransferirMoedas(Transferencia transferencia)
-    {
-        await using var transacaoEntityFrameworkCore = await _contexto.Database.BeginTransactionAsync();
-        
-        try
-        {
-            var aluno = await _repositorioAluno.ObterPorCredencial(transferencia.IdentificadorAluno);
-            var professor = await ObterPorCredencial(transferencia.IdentificadorProfessor);
-
-            if (aluno is null || professor is null) 
-                throw new Exception(StatusCodes.Status404NotFound.ToString());
-
-            if (professor.Moedas < transferencia.Moedas)
-                throw new Exception(StatusCodes.Status400BadRequest.ToString());
-
-            professor.Moedas -= transferencia.Moedas;
-            aluno.Moedas += transferencia.Moedas;
-
-            await _repositorioAluno.Atualizar(aluno.Id, aluno);
-            await Atualizar(professor.Id, professor);
-
-            await _repositorioTransacao.CriarTransacao(new Transacao()
-            {
-                Id = Guid.NewGuid().ToString(),
-                DestinatarioIdentificador = aluno.Id,
-                RemetenteIdentificador = professor.Id,
-                VantagemIdentificador = "",
-                Valor = transferencia.Moedas,
-                Data = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
-                Descricao = transferencia.Descricao,
-            });
-            await _email.EnviarEmail(new Email()
-            {
-                EmailDestino = aluno.Email,
-                Assunto = "Moedas recebidas!",
-                Mensagem = $"Você recebeu {transferencia.Moedas} moedas do professor {professor.Nome}"
-            });
-        }
-        catch
-        {
-            await transacaoEntityFrameworkCore.RollbackAsync();
         }
     }
 }

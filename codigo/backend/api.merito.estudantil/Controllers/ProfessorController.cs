@@ -110,6 +110,7 @@ public class ProfessorController : ControllerBase
         }
     }
 
+    [HttpPost("transferirMoedas")]
     public async Task<IActionResult> TransferirMoedas([FromBody] Transferencia transferencia)
     {
         try

@@ -14,7 +14,7 @@ public class UsuarioController : ControllerBase
         _repositorio = repositorio;
     }
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] Login login)
     {
         try
