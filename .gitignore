@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+codigo/backend/api.merito.estudantil/CredenciaisParaEnvioDeEmail.cs
