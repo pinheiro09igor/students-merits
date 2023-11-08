@@ -5,8 +5,9 @@ using api.merito.estudantil.servicos;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var allowAll = "allowAll";
 var connectionString = builder.Configuration["ConnectionStrings:local"];
+builder.Services.AddCors(options => options.AddPolicy(name: allowAll, policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
 builder.Services.AddDbContext<Contexto>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddControllers();
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(allowAll);
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
