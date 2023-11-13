@@ -24,25 +24,14 @@ public class TransacaoServico : IRepositorioTransacao
 
     public async Task<Transacao> CriarTransacao(Transacao transacao)
     {
-        await using var transacaoEntityFrameworkCore = await _contexto.Database.BeginTransactionAsync();
+        transacao.Id = Guid.NewGuid().ToString();
+        transacao.Data = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
 
-        try
-        {
-            transacao.Id = Guid.NewGuid().ToString();
-            transacao.Data = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss");
+        await _contexto.Transacoes.AddAsync(transacao);
+        var resposta = await _contexto.SaveChangesAsync();
 
-            await _contexto.Transacoes.AddAsync(transacao);
-            var resposta = await _contexto.SaveChangesAsync();
-            await transacaoEntityFrameworkCore.CommitAsync();
-
-            if (resposta == 0) 
-                throw new Exception(StatusCodes.Status400BadRequest.ToString());
-            return transacao;
-        }
-        catch
-        {
-            await transacaoEntityFrameworkCore.RollbackAsync();
-            return null;
-        }
+        if (resposta == 0) 
+            throw new Exception(StatusCodes.Status400BadRequest.ToString());
+        return transacao;
     }
 }

@@ -3,13 +3,8 @@ using Newtonsoft.Json;
 
 namespace api.merito.estudantil.models;
 
-public class Transacao
-{
-    [Key]
-    [Required]
-    [JsonProperty("id")]
-    public string Id { get; set; }
-    
+public class Transacao : Base
+{    
     [Required]
     [JsonProperty("destinatarioId")]
     public string DestinatarioIdentificador { get; set; }

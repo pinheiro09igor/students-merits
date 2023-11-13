@@ -46,7 +46,8 @@ public class AlunoServico : IRepositorioGenerico<Aluno>
                 Id = entidade.Id,
                 Nome = entidade.Nome,
                 Email = entidade.Email,
-                Senha = entidade.Senha
+                Senha = entidade.Senha,
+                Tipo = "aluno"
             });
 
             var resposta = await _contexto.SaveChangesAsync();

@@ -23,41 +23,100 @@ public class EmpresaServico : IRepositorioGenerico<Empresa>
         var empresa = await _contexto.Empresas
             .FirstOrDefaultAsync(a => a.Id.Equals(credencial) || a.Email.Equals(credencial));
 
-        if (empresa is null) throw new Exception(StatusCodes.Status404NotFound.ToString());
-        return empresa;
+        return empresa is null ? throw new Exception(StatusCodes.Status404NotFound.ToString()) : empresa;
     }
 
     public async Task<Empresa> Criar(Empresa entidade)
     {
-        entidade.Id = Guid.NewGuid().ToString();
-        await _contexto.Empresas.AddAsync(entidade);
-        var resposta = await _contexto.SaveChangesAsync();
-        if (resposta == 0) throw new Exception(StatusCodes.Status400BadRequest.ToString());
-        return entidade;
+        await using var transacao = await _contexto.Database.BeginTransactionAsync();
+
+        try
+        {
+            entidade.Id = Guid.NewGuid().ToString();
+            await _contexto.Empresas.AddAsync(entidade);
+            await _contexto.Usuarios.AddAsync(new Usuario()
+            {
+                Id = entidade.Id,
+                Nome = entidade.Nome,
+                Email = entidade.Email,
+                Senha = entidade.Senha,
+                Tipo = "empresa"
+            });
+
+            var resposta = await _contexto.SaveChangesAsync();
+            await transacao.CommitAsync();
+
+            if (resposta == 0) throw new Exception(StatusCodes.Status400BadRequest.ToString());
+            return entidade;
+        } catch
+        {
+            await transacao.RollbackAsync();
+            return null;
+        }
     }
 
     public async Task<Empresa> Atualizar(string credencial, Empresa novaEntidade)
     {
-        var empresaEncontrada = await ObterPorCredencial(credencial);
-        if(empresaEncontrada is null) throw new Exception(StatusCodes.Status404NotFound.ToString());
+        await using var transacao = await _contexto.Database.BeginTransactionAsync();
 
-        empresaEncontrada.Nome = novaEntidade.Nome;
-        empresaEncontrada.Email = novaEntidade.Email;
-        empresaEncontrada.Senha = novaEntidade.Senha;
+        try
+        {
+            var empresaEncontrada = await ObterPorCredencial(credencial) ?? throw new Exception(StatusCodes.Status404NotFound.ToString());
+            var usuarioEncontrado = await _contexto.Usuarios
+                .FirstOrDefaultAsync(u => u.Id.Equals(empresaEncontrada.Id) || u.Email.Equals(empresaEncontrada.Email));
 
-        _contexto.Empresas.Update(empresaEncontrada);
-        var resposta = await _contexto.SaveChangesAsync();
-        if(resposta == 0) throw new Exception(StatusCodes.Status400BadRequest.ToString());
-        return empresaEncontrada;
+            if (empresaEncontrada is null || usuarioEncontrado is null)
+                throw new Exception(StatusCodes.Status404NotFound.ToString());
+
+            empresaEncontrada.Nome = novaEntidade.Nome;
+            empresaEncontrada.Email = novaEntidade.Email;
+            empresaEncontrada.Senha = novaEntidade.Senha;
+
+            usuarioEncontrado.Nome = empresaEncontrada.Nome;
+            usuarioEncontrado.Email = empresaEncontrada.Email;
+            usuarioEncontrado.Senha = empresaEncontrada.Senha;
+
+            _contexto.Empresas.Update(empresaEncontrada);
+            _contexto.Usuarios.Update(usuarioEncontrado);
+
+            var resposta = await _contexto.SaveChangesAsync();
+            await transacao.CommitAsync();
+
+            if (resposta == 0) throw new Exception(StatusCodes.Status400BadRequest.ToString());
+            return empresaEncontrada;
+        } catch
+        {
+            await transacao.RollbackAsync();
+            return null;
+        }
     }
 
     public async Task Apagar(string credencial)
     {
-        var empresaEncontrada = await ObterPorCredencial(credencial);
-        if(empresaEncontrada is null) throw new Exception(StatusCodes.Status404NotFound.ToString());
+        await using var transacao = await _contexto.Database.BeginTransactionAsync();
 
-        _contexto.Empresas.Remove(empresaEncontrada);
-        var resposta = await _contexto.SaveChangesAsync();
-        if(resposta == 0) throw new Exception(StatusCodes.Status400BadRequest.ToString());
+        try
+        {
+            var empresaEncontrada = await ObterPorCredencial(credencial);
+            var usuarioEncontrado = await _contexto.Usuarios.FirstOrDefaultAsync(
+                u => u.Id.Equals(empresaEncontrada.Id) ||
+                     u.Email.Equals(empresaEncontrada.Email));
+
+            if (empresaEncontrada is null || usuarioEncontrado is null)
+                throw new Exception(StatusCodes.Status404NotFound.ToString());
+
+            _contexto.Empresas.Remove(empresaEncontrada);
+            _contexto.Usuarios.Remove(usuarioEncontrado);
+
+            var resposta = await _contexto.SaveChangesAsync();
+            await transacao.CommitAsync();
+
+            if (resposta == 0)
+                throw new Exception(StatusCodes.Status400BadRequest.ToString());
+        }
+        catch
+        {
+            await transacao.RollbackAsync();
+        }
     }
 }

@@ -40,7 +40,12 @@ public class ResgateVantagemServico : IRepositorioResgateVantagem
             if ((aluno.Moedas - vantagem.Valor) < 0) 
                 throw new Exception(StatusCodes.Status400BadRequest.ToString());
 
-            await _repositorioAluno.Atualizar(aluno.Id, aluno);
+            vantagem.ResgatadaPor = aluno.Id;
+            aluno.Moedas -= vantagem.Valor;
+
+            _contexto.Alunos.Update(aluno);
+            _contexto.Vantagens.Update(vantagem);
+
             await _repositorioTransacao.CriarTransacao(new Transacao()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -51,7 +56,7 @@ public class ResgateVantagemServico : IRepositorioResgateVantagem
                 Data = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
                 Descricao = $"Vantagem resgatada de nome: '{vantagem.Nome}'"
             });
-            await _email.EnviarEmail(new Email()
+            _email.EnviarEmail(new Email()
             {
                 EmailDestino = aluno.Email,
                 Assunto = "Você resgatou uma vantagem!",
@@ -61,12 +66,15 @@ public class ResgateVantagemServico : IRepositorioResgateVantagem
             
             var empresa = await _repositorioEmpresa.ObterPorCredencial(vantagem.IdEmpresa);
             if (empresa is not null)
-                await _email.EnviarEmail(new Email()
+                _email.EnviarEmail(new Email()
                 {
                     EmailDestino = empresa.Email,
                     Assunto = "Uma vantagem foi resgatada!",
                     Mensagem = $"A vantagem de nome '{vantagem.Nome} foi resgatada pelo aluno '{aluno.Nome}' com sucesso!"
                 });
+
+            await _contexto.SaveChangesAsync();
+            await transacaoEntityFrameworkCore.CommitAsync();
         }
         catch
         {

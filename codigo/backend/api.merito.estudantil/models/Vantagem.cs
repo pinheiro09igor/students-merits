@@ -3,12 +3,8 @@ using Newtonsoft.Json;
 
 namespace api.merito.estudantil.models;
 
-public class Vantagem
+public class Vantagem : Base
 {
-    [Key]
-    [JsonProperty("id")]
-    public string Id { get; set; }
-
     [Required]
     [JsonProperty("nome")]
     public string Nome { get; set; }
@@ -32,4 +28,7 @@ public class Vantagem
     [Required]
     [JsonProperty("idEmpresa")]
     public string IdEmpresa { get; set; }
+
+    [JsonProperty("resgatadaPor")]
+    public string ResgatadaPor { get; set; }
 }

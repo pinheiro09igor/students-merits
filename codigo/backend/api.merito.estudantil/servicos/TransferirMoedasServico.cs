@@ -38,8 +38,8 @@ public class TransferirMoedasServico : IRepositorioTransferenciaDeMoedas
             professor.Moedas -= transferencia.Moedas;
             aluno.Moedas += transferencia.Moedas;
 
-            await _repositorioAluno.Atualizar(aluno.Id, aluno);
-            await _repositorioProfessor.Atualizar(professor.Id, professor);
+            _contexto.Professores.Update(professor);
+            _contexto.Alunos.Update(aluno);
 
             await _repositorioTransacao.CriarTransacao(new Transacao()
             {
@@ -51,12 +51,15 @@ public class TransferirMoedasServico : IRepositorioTransferenciaDeMoedas
                 Data = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
                 Descricao = transferencia.Descricao,
             });
-            await _email.EnviarEmail(new Email()
+            _email.EnviarEmail(new Email()
             {
                 EmailDestino = aluno.Email,
                 Assunto = "Moedas recebidas!",
                 Mensagem = $"Você recebeu {transferencia.Moedas} moedas do professor {professor.Nome}"
             });
+
+            await _contexto.SaveChangesAsync();
+            await transacaoEntityFrameworkCore.CommitAsync();
         }
         catch
         {

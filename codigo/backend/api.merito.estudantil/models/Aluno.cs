@@ -4,8 +4,18 @@ using Newtonsoft.Json;
 
 namespace api.merito.estudantil.models;
 
-public class Aluno: Usuario
+[Table("Alunos")]
+public class Aluno : Base
 {
+    [JsonProperty("nome")]
+    public string Nome { get; set; }
+
+    [JsonProperty("email")]
+    public string Email { get; set; }
+
+    [JsonProperty("senha")]
+    public string Senha { get; set; }
+
     [Required]
     [JsonProperty("cpf")]
     public string Cpf { get; set; }

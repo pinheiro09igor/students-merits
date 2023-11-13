@@ -4,5 +4,5 @@ namespace api.merito.estudantil.repositorios;
 
 public interface IEmail
 {
-    Task EnviarEmail(Email email);
+    void EnviarEmail(Email email);
 }

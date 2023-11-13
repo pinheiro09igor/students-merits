@@ -5,7 +5,7 @@
 namespace api.merito.estudantil.Migrations
 {
     /// <inheritdoc />
-    public partial class Migrations1 : Migration
+    public partial class diogo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +15,13 @@ namespace api.merito.estudantil.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cpf = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Rg = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Endereco = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Moedas = table.Column<double>(type: "float", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Moedas = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,11 +47,11 @@ namespace api.merito.estudantil.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Cpf = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Moedas = table.Column<double>(type: "float", nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cpf = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Moedas = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,13 +66,28 @@ namespace api.merito.estudantil.Migrations
                     DestinatarioIdentificador = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RemetenteIdentificador = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Valor = table.Column<double>(type: "float", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VantagemIdentificador = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transacoes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Usuarios",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Usuarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,6 +145,13 @@ namespace api.merito.estudantil.Migrations
                 column: "Email",
                 unique: true,
                 filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Email",
+                table: "Usuarios",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
         }
 
         /// <inheritdoc />
@@ -146,6 +168,9 @@ namespace api.merito.estudantil.Migrations
 
             migrationBuilder.DropTable(
                 name: "Transacoes");
+
+            migrationBuilder.DropTable(
+                name: "Usuarios");
 
             migrationBuilder.DropTable(
                 name: "Vantagens");

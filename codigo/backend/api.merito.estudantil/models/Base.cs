@@ -6,6 +6,6 @@ namespace api.merito.estudantil.models;
 public class Base
 {
     [Key]
-    [JsonProperty("id")]
+    [JsonProperty("_id")]
     public string Id { get; set; }
 }

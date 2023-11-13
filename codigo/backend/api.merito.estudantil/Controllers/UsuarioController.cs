@@ -19,11 +19,11 @@ public class UsuarioController : ControllerBase
     {
         try
         {
-            await _repositorio.Login(login);
+            var usuario = await _repositorio.Login(login);
             return Ok(new
             {
-                statusCode = StatusCodes.Status200OK.ToString(),
-                message = "USUÁRIO LOGADO COM SUCESSO"
+                id = usuario.Id,
+                tipo = usuario.Tipo
             });
         }
         catch

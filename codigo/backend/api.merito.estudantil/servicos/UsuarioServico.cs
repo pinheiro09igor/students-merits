@@ -13,21 +13,19 @@ public class UsuarioServico : IRepositorioUsuario
         _contexto = contexto;
     }
     
-    public async Task Login(Login login)
+    public async Task<Usuario> Login(Login login)
     {
         var usuario = 
-            await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Email.Equals(login.Email) && u.Senha.Equals(login.Senha));
-        if (usuario is null) 
-            throw new Exception(StatusCodes.Status404NotFound.ToString());
+            await _contexto.Usuarios.FirstOrDefaultAsync(u => u.Email.Equals(login.Email) && u.Senha.Equals(login.Senha)) ?? throw new Exception(StatusCodes.Status404NotFound.ToString());
+
+        return usuario;
     }
 
     public async Task<Saldo> ObterSaldo(string credencial)
     {
         var usuario =
-            await _contexto.Alunos.FirstOrDefaultAsync(a => a.Id.Equals(credencial) || a.Email.Equals(credencial) || a.Rg.Equals(credencial));
-        
-        if (usuario is null) 
-            throw new Exception(StatusCodes.Status404NotFound.ToString());
+            await _contexto.Usuarios.FirstOrDefaultAsync(a => a.Id.Equals(credencial)) 
+            ?? throw new Exception(StatusCodes.Status404NotFound.ToString());
 
         var transacoesComNome = new List<TransacaoComNome>();
         var transacoesDoRemetenteEDoDestinatario = new List<Transacao>();
@@ -60,10 +58,25 @@ public class UsuarioServico : IRepositorioUsuario
             });
         }
 
-        return new Saldo()
+        
+
+        if(usuario.Tipo.Equals("aluno"))
         {
-            Moedas = usuario.Moedas,
-            Transacoes = transacoesComNome
-        };
+            var usuarioEncontrado = await _contexto.Alunos.FirstOrDefaultAsync(u => u.Id.Equals(usuario.Id));
+            return new Saldo()
+            {
+                Moedas = usuarioEncontrado.Moedas,
+                Transacoes = transacoesComNome
+            };
+        } 
+        else
+        {
+            var usuarioEncontrado = await _contexto.Professores.FirstOrDefaultAsync(u => u.Id.Equals(usuario.Id));
+            return new Saldo()
+            {
+                Moedas = usuarioEncontrado.Moedas,
+                Transacoes = transacoesComNome
+            };
+        }
     }
 }

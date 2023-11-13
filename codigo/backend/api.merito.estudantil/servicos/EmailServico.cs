@@ -7,21 +7,18 @@ namespace api.merito.estudantil.servicos;
 
 public class EmailServico : IEmail
 {
-    public async Task EnviarEmail(Email email)
+    public void EnviarEmail(Email email)
     {
-        var cliente = new SmtpClient(CredenciaisParaEnvioDeEmail.Server, CredenciaisParaEnvioDeEmail.Port)
-        {
-            EnableSsl = true,
-            Credentials = new NetworkCredential(
-                CredenciaisParaEnvioDeEmail.Email, 
-                CredenciaisParaEnvioDeEmail.Senha)
-        };
+        using MailMessage mail = new();
+        mail.From = new MailAddress(CredenciaisParaEnvioDeEmail.Email);
+        mail.To.Add(email.EmailDestino);
+        mail.Subject = email.Assunto;
+        mail.Body = email.Mensagem;
+        mail.IsBodyHtml = true;
 
-        await cliente.SendMailAsync(
-            new MailMessage(
-                from:CredenciaisParaEnvioDeEmail.Email, 
-                to:email.EmailDestino, 
-                subject:email.Assunto, 
-                email.Mensagem));
+        using SmtpClient smtp = new(CredenciaisParaEnvioDeEmail.Server, CredenciaisParaEnvioDeEmail.Port);
+        smtp.Credentials = new NetworkCredential(CredenciaisParaEnvioDeEmail.Email, CredenciaisParaEnvioDeEmail.Senha);
+        smtp.EnableSsl = true;
+        smtp.Send(mail);
     }
 }

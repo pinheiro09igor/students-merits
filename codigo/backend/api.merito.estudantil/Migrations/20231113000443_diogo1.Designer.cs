@@ -11,8 +11,8 @@ using api.merito.estudantil.contexto;
 namespace api.merito.estudantil.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20231105214847_Migrations1")]
-    partial class Migrations1
+    [Migration("20231113000443_diogo1")]
+    partial class diogo1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,11 +130,9 @@ namespace api.merito.estudantil.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Data")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Descricao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DestinatarioIdentificador")
@@ -154,6 +152,32 @@ namespace api.merito.estudantil.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Transacoes");
+                });
+
+            modelBuilder.Entity("api.merito.estudantil.models.Usuario", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Senha")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tipo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("api.merito.estudantil.models.Vantagem", b =>
@@ -179,6 +203,9 @@ namespace api.merito.estudantil.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResgatadaPor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Valor")

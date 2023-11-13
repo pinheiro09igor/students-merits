@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace api.merito.estudantil.models;
 
-public class Transferencia
+public class Transferencia : Base
 {
     [Required]
     [JsonProperty("professorId")]

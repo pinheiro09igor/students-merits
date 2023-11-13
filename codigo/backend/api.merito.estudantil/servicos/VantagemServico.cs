@@ -15,8 +15,10 @@ public class VantagemServico : IRepositorioVantagem
     
     public async Task<IEnumerable<Vantagem>> ObterTodos(ObterVantagensDto dto)
     {
+        var vantagensObtidas = new List<Vantagem>();
         var vantagens = await _contexto.Vantagens.ToListAsync();
-        return vantagens.Where(v => v.IdEmpresa.Equals(dto.EmpresaIdentificador));
+        vantagensObtidas.AddRange(vantagens.Where(v => v.IdEmpresa.Equals(dto.Id)));
+        return vantagens;
     }
 
     public async Task<Vantagem> ObterPorCredencial(string credencial)
